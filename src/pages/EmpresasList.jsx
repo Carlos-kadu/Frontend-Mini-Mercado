@@ -54,9 +54,9 @@ export default function EmpresasList() {
                 <td>{empresa.razao_social}</td>
                 <td>{empresa.cnpj}</td>
                 <td>{empresa.num_max_filiais}</td>
-                <td className="text-center action-icons">
-                  <Link to={`/empresas/editar/${empresa.id_empresa}`} title="Editar"><i className="fas fa-pencil-alt"></i></Link>
-                  <a href="#" title="Excluir" onClick={() => handleDelete(empresa.id_empresa)}><i className="fas fa-trash-alt"></i></a>
+                <td className="text-center action-icons d-flex justify-content-center align-items-center gap-2">
+                  <Link to={`/empresas/editar/${empresa.id_empresa}`} title="Editar" className="bg-light rounded p-1 px-2"><i className="fas fa-edit text-primary"></i></Link>
+                  <a href="#" title="Excluir" onClick={() => handleDelete(empresa.id_empresa)} className="bg-light rounded p-1 px-2"><i className="fa-solid fa-trash text-danger"></i></a>
                 </td>
               </tr>
             ))}
