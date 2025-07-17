@@ -78,7 +78,7 @@ export default function ProdutoForm() {
 
   return (
     <div className="card p-4">
-      <h2 className="h4 mb-3">{id ? 'Editar' : 'Novo'} {categoria && categoria.charAt(0).toUpperCase() + categoria.slice(1)}</h2>
+      <h2 className="h4 mb-3">{id ? 'Editar Produto' : 'Novo Produto'}</h2>
       <form onSubmit={handleSubmit}>
         {Array.from({ length: Math.ceil(fields.length / chunkSize) }, (_, i) => (
           <div className="row" key={i}>
