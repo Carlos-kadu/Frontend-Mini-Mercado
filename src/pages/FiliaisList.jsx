@@ -13,7 +13,6 @@ export default function FiliaisList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Buscar empresas para mapear ID para Razão Social
     axios.get(`${API_BASE_URL}/empresas/`)
       .then(res => {
         const map = {};
@@ -80,12 +79,12 @@ export default function FiliaisList() {
               <tr key={filial.id_filial}>
                 <td>{filial.id_filial}</td>
                 <td>{filial.nome_cidade}</td>
-                <td>{empresasMap[filial.empresa] || 'Carregando...'}</td> {/* Exibe Razão Social */}
-                <td>{filial.qtd_produtos}</td> {/* Supondo que o backend já retorna qtd_produtos */}
-                <td className="text-center action-icons">
-                  <Link to={`/filiais/editar/${filial.id_filial}`} title="Editar"><i className="fas fa-pencil-alt"></i></Link>
-                  <a href="#" title="Excluir" onClick={() => handleDelete(filial.id_filial)}><i className="fas fa-trash-alt"></i></a>
-                  <Link to={`/produtos?filial=${filial.id_filial}`} title="Visualizar Produtos"><i className="fas fa-box"></i></Link> {/* Link para produtos da filial */}
+                <td>{empresasMap[filial.empresa] || 'Carregando...'}</td>
+                <td>{filial.qtd_produtos}</td>
+                <td className="text-center action-icons d-flex justify-content-center align-items-center gap-2">
+                  <Link to={`/filiais/editar/${filial.id_filial}`} title="Editar" className="bg-light rounded p-1 px-2"><i className="fas fa-edit text-primary"></i></Link>
+                  <a href="#" title="Excluir" onClick={() => handleDelete(filial.id_filial)} className="bg-light rounded p-1 px-2"><i className="fa-solid fa-trash text-danger"></i></a>
+                  <Link to={`/produtos?filial=${filial.id_filial}`} title="Visualizar Produtos" className="bg-light rounded p-1 px-2"><i className="fas fa-box text-info"></i></Link>
                 </td>
               </tr>
             ))}
