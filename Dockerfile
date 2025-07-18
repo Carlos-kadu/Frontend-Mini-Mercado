@@ -3,7 +3,7 @@ FROM node:20 AS build
 WORKDIR /app
 COPY package*.json ./
 COPY . .
-RUN npm install react-bootstrap bootstrap && npm run build
+RUN npm install react-bootstrap bootstrap && npm run lint && npm run lint:fix && npm run build
 
 # produção
 FROM nginx:alpine
