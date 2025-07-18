@@ -10,7 +10,7 @@ export default function ModalConfirm({ show, onHide, onConfirm, title, body }) {
       <Modal.Body>{body || "Tem certeza?"}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>Cancelar</Button>
-        <Button variant="danger" onClick={onConfirm}>Excluir</Button>
+        <Button variant="danger" onClick={onConfirm}>Confirmar</Button>
       </Modal.Footer>
     </Modal>
   );
