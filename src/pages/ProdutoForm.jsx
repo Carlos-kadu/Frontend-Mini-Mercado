@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loader from '../components/Loader';
 import { API_BASE_URL } from '../api';
 
 const categoriaFields = {
@@ -18,7 +19,7 @@ const categoriaFields = {
     { name: 'preco', label: 'Preço', type: 'number', step: '0.01' },
     { name: 'quant', label: 'Quantidade', type: 'number' },
     { name: 'descricao', label: 'Descrição', type: 'text' },
-    { name: 'tamanho', label: 'Tamanho', type: 'number' },
+    { name: 'tamanho', label: 'Tamanho', type: 'text' },
     { name: 'genero', label: 'Gênero', type: 'text' },
     { name: 'filial', label: 'Filial', type: 'select' },
   ],
@@ -45,15 +46,42 @@ export default function ProdutoForm() {
   const navigate = useNavigate();
   const [produto, setProduto] = useState({});
   const [filiais, setFiliais] = useState([]);
+  const [empresasMap, setEmpresasMap] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API_BASE_URL}/filiais/`)
-      .then(res => setFiliais(res.data));
-    if (id) {
-      axios.get(`${API_BASE_URL}/${endpoints[categoria]}/${id}/`)
-        .then(res => setProduto(res.data))
-        .catch(() => alert('Erro ao carregar produto'));
-    }
+    setLoading(true);
+    Promise.all([
+      // Carregar empresas
+      axios.get(`${API_BASE_URL}/empresas/`),
+      // Carregar filiais
+      axios.get(`${API_BASE_URL}/filiais/`),
+      // Carregar produto se for edição
+      id ? axios.get(`${API_BASE_URL}/${endpoints[categoria]}/${id}/`) : Promise.resolve(null)
+    ])
+    .then(([empresasRes, filiaisRes, produtoRes]) => {
+      // Processar empresas
+      const map = {};
+      empresasRes.data.forEach(emp => {
+        map[emp.id_empresa] = emp.razao_social;
+      });
+      setEmpresasMap(map);
+      
+      // Processar filiais
+      setFiliais(filiaisRes.data);
+      
+      // Processar produto se for edição
+      if (produtoRes) {
+        setProduto(produtoRes.data);
+      }
+      
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error('Erro ao carregar dados do formulário:', err);
+      alert('Erro ao carregar dados');
+      setLoading(false);
+    });
   }, [id, categoria]);
 
   const handleChange = e => {
@@ -69,12 +97,20 @@ export default function ProdutoForm() {
     const req = id
       ? axios.put(`${API_BASE_URL}/${endpoints[categoria]}/${id}/`, produto)
       : axios.post(`${API_BASE_URL}/${endpoints[categoria]}/`, produto);
-    req.then(() => navigate('/produtos'))
+    req.then(() => navigate(`/produtos?categoria=${categoria}`))
       .catch(() => alert('Erro ao salvar'));
   };
 
   const fields = categoriaFields[categoria] || [];
   const chunkSize = 2;
+
+  if (loading) {
+    return <Loader text="Carregando formulário..." />;
+  }
+
+  if (filiais.length === 0) {
+    return <div className="alert alert-warning">Cadastre uma empresa e uma filial antes de criar um produto.</div>;
+  }
 
   return (
     <div className="card p-4">
@@ -89,7 +125,9 @@ export default function ProdutoForm() {
                   <select className="form-select" name={field.name} value={produto[field.name] || ''} onChange={handleChange} required>
                     <option value="">Selecione...</option>
                     {filiais.map(f => (
-                      <option key={f.id_filial} value={f.id_filial}>{f.nome_cidade}</option>
+                      <option key={f.id_filial} value={f.id_filial}>
+                        {f.nome_cidade} - {empresasMap[f.empresa] || 'Carregando...'}
+                      </option>
                     ))}
                   </select>
                 ) : field.type === 'checkbox' ? (

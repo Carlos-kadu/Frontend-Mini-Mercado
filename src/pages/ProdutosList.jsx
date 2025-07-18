@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ModalConfirm from '../components/ModalConfirm';
+import Loader from '../components/Loader';
 import { API_BASE_URL } from '../api';
-import { SearchContext } from '../searchContext.jsx';
 
 const endpoints = {
   alimentacao: 'alimentacao',
@@ -11,27 +11,22 @@ const endpoints = {
   utilidades: 'utilidades-domesticas',
 };
 
-const labels = {
-  alimentacao: 'Alimentação',
-  vestuario: 'Vestuário',
-  utilidades: 'Utilidades Domésticas',
-};
-
-export default function ProdutosList({ categoria, searchTerm: searchTermProp }) {
+export default function ProdutosList({ categoria }) {
   const [produtos, setProdutos] = useState([]);
   const [filiaisMap, setFiliaisMap] = useState({});
   const [filiais, setFiliais] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [produtoToDelete, setProdutoToDelete] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(searchTermProp || '');
+  const [searchTerm, setSearchTerm] = useState('');
   const [filialFiltro, setFilialFiltro] = useState('');
   const [estoqueFiltro, setEstoqueFiltro] = useState('todos');
   const [limiteEstoque, setLimiteEstoque] = useState(10);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const { search } = useContext(SearchContext);
 
   useEffect(() => {
+    setLoading(true);
     axios.get(`${API_BASE_URL}/filiais/`)
       .then(res => {
         setFiliais(res.data);
@@ -45,6 +40,7 @@ export default function ProdutosList({ categoria, searchTerm: searchTermProp }) 
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const params = new URLSearchParams(location.search);
     const filialIdFromUrl = params.get('filial');
     const searchParam = params.get('search');
@@ -56,36 +52,18 @@ export default function ProdutosList({ categoria, searchTerm: searchTermProp }) 
     setEstoqueFiltro(baixoEstoqueParam === '1' ? 'baixo' : 'todos');
     setLimiteEstoque(limiteParam ? Number(limiteParam) : 10);
 
-    let apiUrls = [];
-    if (categoria === 'todas') {
-      apiUrls = Object.values(endpoints).map(endpoint => {
-        let url = `${API_BASE_URL}/${endpoint}/`;
-        const filtros = [];
-        if (filialIdFromUrl) filtros.push(`filial=${filialIdFromUrl}`);
-        if (baixoEstoqueParam === '1') filtros.push('baixo_estoque=1');
-        if (baixoEstoqueParam === '1' && limiteParam) filtros.push(`limite=${limiteParam}`);
-        if (filtros.length) url += '?' + filtros.join('&');
-        return url;
-      });
-      Promise.all(apiUrls.map(url => axios.get(url).then(res => res.data)))
-        .then(results => setProdutos([].concat(...results)))
-        .catch(() => setProdutos([]));
-    } else {
-      let apiUrl = `${API_BASE_URL}/${endpoints[categoria]}/`;
-      const filtros = [];
-      if (filialIdFromUrl) filtros.push(`filial=${filialIdFromUrl}`);
-      if (baixoEstoqueParam === '1') filtros.push('baixo_estoque=1');
-      if (baixoEstoqueParam === '1' && limiteParam) filtros.push(`limite=${limiteParam}`);
-      if (filtros.length) apiUrl += '?' + filtros.join('&');
-      axios.get(apiUrl)
-        .then(res => setProdutos(res.data))
-        .catch(() => setProdutos([]));
-    }
+    let apiUrl = `${API_BASE_URL}/${endpoints[categoria]}/`;
+    const filtros = [];
+    if (filialIdFromUrl) filtros.push(`filial=${filialIdFromUrl}`);
+    if (baixoEstoqueParam === '1') filtros.push('baixo_estoque=1');
+    if (baixoEstoqueParam === '1' && limiteParam) filtros.push(`limite=${limiteParam}`);
+    if (filtros.length) apiUrl += '?' + filtros.join('&');
+    
+    axios.get(apiUrl)
+      .then(res => setProdutos(res.data))
+      .catch(() => setProdutos([]))
+      .finally(() => setLoading(false));
   }, [categoria, location.search]);
-
-  useEffect(() => {
-    if (searchTermProp !== undefined) setSearchTerm(searchTermProp);
-  }, [searchTermProp]);
 
   const handleDelete = (id) => {
     setProdutoToDelete(id);
@@ -131,21 +109,32 @@ export default function ProdutosList({ categoria, searchTerm: searchTermProp }) 
   };
 
   const filteredProdutos = produtos.filter(produto =>
-    (search ? produto.nome.toLowerCase().includes(search.toLowerCase()) : produto.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+    produto.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <>
-      <div className="mb-3 painel">
-        <div className="d-flex align-items-center gap-3 w-100 flex-wrap">
-          <select className="form-select" style={{ maxWidth: 300, minWidth: 200 }} value={filialFiltro} onChange={handleFilialChange}>
-            <option value="">Todas as filiais</option>
-            {filiais.map(f => (
-              <option key={f.id_filial} value={f.id_filial}>{f.nome_cidade}</option>
-            ))}
-          </select>
-          <div className="d-flex align-items-center gap-3">
-            <select className="form-select" style={{ maxWidth: 300, minWidth: 200 }} value={estoqueFiltro} onChange={handleEstoqueFiltroChange}>
+      <div className="mb-3">
+        <div className="row g-2 align-items-center w-100 flex-wrap">
+          <div className="col-md">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Pesquisar por nome..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div className="col-md-auto">
+            <select className="form-select" style={{ minWidth: 180 }} value={filialFiltro} onChange={handleFilialChange}>
+              <option value="">Todas as filiais</option>
+              {filiais.map(f => (
+                <option key={f.id_filial} value={f.id_filial}>{f.nome_cidade}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-md-auto d-flex align-items-center gap-2">
+            <select className="form-select" style={{ minWidth: 180 }} value={estoqueFiltro} onChange={handleEstoqueFiltroChange}>
               <option value="todos">Todos os itens</option>
               <option value="baixo">Itens em baixo estoque</option>
             </select>
@@ -168,43 +157,49 @@ export default function ProdutosList({ categoria, searchTerm: searchTermProp }) 
         </div>
       </div>
 
-      <div className="table-responsive">
-        <table className="table table-hover align-middle">
-          <thead className="table-light">
-            <tr>
-              <th>Código</th>
-              <th>Nome</th>
-              <th>Quantidade</th>
-              <th>Preço</th>
-              <th>Filial</th>
-              <th className="text-center">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProdutos.map(produto => (
-              <tr key={produto.indice}>
-                <td>{produto.indice}</td>
-                <td>{produto.nome}</td>
-                <td>{produto.quant}</td>
-                <td>{produto.preco}</td>
-                <td>{filiaisMap[produto.filial] || 'Carregando...'}</td>
-                <td className="text-center action-icons d-flex justify-content-center align-items-center gap-2">
-                  <Link to={`/produtos/${categoria}/visualizar/${produto.indice}`} title="Visualizar" className="bg-light rounded p-1 px-2"><i className="fa-solid fa-eye text-success"></i></Link>
-                  <Link to={`/produtos/${categoria}/editar/${produto.indice}`} title="Editar" className="bg-light rounded p-1 px-2"><i className="fas fa-edit text-primary"></i></Link>
-                  <a href="#" title="Excluir" onClick={() => handleDelete(produto.indice)} className="bg-light rounded p-1 px-2"><i className="fa-solid fa-trash text-danger"></i></a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <ModalConfirm
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        onConfirm={confirmDelete}
-        title="Confirmar Exclusão"
-        body={`Você tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.`}
-      />
+      {loading ? (
+        <Loader text="Carregando produtos..." />
+      ) : (
+        <>
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Quantidade</th>
+                  <th>Preço</th>
+                  <th>Filial</th>
+                  <th className="text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProdutos.map(produto => (
+                  <tr key={produto.indice} id={`produto-row-${produto.indice}`}>
+                    <td>{produto.indice}</td>
+                    <td>{produto.nome}</td>
+                    <td>{produto.quant}</td>
+                    <td>{produto.preco}</td>
+                    <td>{filiaisMap[produto.filial] || 'Carregando...'}</td>
+                    <td className="text-center action-icons d-flex justify-content-center align-items-center gap-2">
+                      <Link to={`/produtos/${categoria}/visualizar/${produto.indice}`} title="Visualizar" className="bg-light rounded p-1 px-2" id={`view-produto-${produto.indice}`}><i className="fa-solid fa-eye text-success"></i></Link>
+                      <Link to={`/produtos/${categoria}/editar/${produto.indice}`} title="Editar" className="bg-light rounded p-1 px-2" id={`edit-produto-${produto.indice}`}><i className="fas fa-edit text-primary"></i></Link>
+                      <button type="button" title="Excluir" className="bg-light rounded p-1 px-2 border-0" onClick={() => handleDelete(produto.indice)} id={`delete-produto-${produto.indice}`}><i className="fa-solid fa-trash text-danger"></i></button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <ModalConfirm
+            show={showModal}
+            onHide={() => setShowModal(false)}
+            onConfirm={confirmDelete}
+            title="Confirmar Exclusão"
+            body={`Você tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita.`}
+          />
+        </>
+      )}
     </>
   );
 }
