@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loader from '../components/Loader';
 import { API_BASE_URL } from '../api';
 
 const endpoints = {
@@ -14,25 +15,37 @@ export default function ProdutoView() {
   const navigate = useNavigate();
   const [produto, setProduto] = useState(null);
   const [filial, setFilial] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     axios.get(`${API_BASE_URL}/${endpoints[categoria]}/${id}/`)
       .then(res => {
         setProduto(res.data);
         if (res.data.filial) {
-          axios.get(`${API_BASE_URL}/filiais/${res.data.filial}/`).then(f => setFilial(f.data));
+          return axios.get(`${API_BASE_URL}/filiais/${res.data.filial}/`);
         }
+        return null;
       })
-      .catch(() => alert('Erro ao carregar produto'));
+      .then(filialRes => {
+        if (filialRes) {
+          setFilial(filialRes.data);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        alert('Erro ao carregar produto');
+        setLoading(false);
+      });
   }, [categoria, id]);
 
-  if (!produto || (produto.filial && !filial)) return (
-    <div className="d-flex justify-content-center align-items-center" style={{height: '300px'}}>
-      <div className="spinner-border text-primary" role="status">
-        <span className="visually-hidden">Carregando...</span>
-      </div>
-    </div>
-  );
+  if (loading) {
+    return <Loader text="Carregando produto..." />;
+  }
+
+  if (!produto) {
+    return <div className="alert alert-danger">Produto não encontrado</div>;
+  }
 
   return (
     <div className="card p-4">
@@ -62,7 +75,9 @@ export default function ProdutoView() {
           } else {
             navigate(`/produtos`);
           }
-        }}>Voltar</button>
+        }}>
+          <i className="fa-solid fa-arrow-left me-1"></i>Voltar
+        </button>
         <button className="btn btn-primary" onClick={() => navigate(`/produtos/${categoria}/editar/${id}`)}>
           <i className="fas fa-edit me-1"></i>Editar
         </button>
