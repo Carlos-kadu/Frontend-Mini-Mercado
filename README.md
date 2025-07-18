@@ -1,12 +1,51 @@
-# React + Vite
+# Frontend Mini Mercado
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é o frontend do projeto Mini Mercado, desenvolvido em React + Vite para a disciplina de Técnicas de Programação em Plataformas Emergentes (TPPE).
 
-Currently, two official plugins are available:
+## Tecnologias Utilizadas
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Bootstrap 5](https://getbootstrap.com/)
+- [Axios](https://axios-http.com/)
+- [ESLint](https://eslint.org/)
+- [Selenium](https://www.selenium.dev/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌐 Deploy
+Acesse o frontend em produção:
 
-## Expanding the ESLint configuration
+👉 [https://frontend-mini-mercado.vercel.app](https://frontend-mini-mercado.vercel.app)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🎨 Protótipo Figma
+Veja o design do sistema:
+
+👉 [Protótipo no Figma](https://www.figma.com/design/P7Iw6NzhkGvnL3Vu72kfgO/Mini-Mercado---TPPE?node-id=0-1&t=sjhqkpkcfMfer1Qw-1)
+
+## 📦 Como rodar localmente
+
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+2. Rode o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   ```
+3. Acesse [http://localhost:5173](http://localhost:5173)
+
+## 🐳 Docker
+Para rodar via Docker:
+
+```bash
+docker compose up --build frontend
+```
+
+## 🧪 Testes automatizados
+- Testes de interface estão em `tests/selenium/` e podem ser rodados via Docker ou localmente.
+
+## 📁 Estrutura de pastas
+- `src/` - Código-fonte React
+- `public/` - Assets estáticos
+- `tests/` - Testes automatizados (Selenium, Playwright)
+
+## 🔗 Backend
+O backend está disponível em: [https://github.com/Carlos-kadu/Backend-Mini-Mercado](https://github.com/Carlos-kadu/Backend-Mini-Mercado)
