@@ -42,7 +42,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 body { background-color: #f8f9fa; }
-.navbar-dark { background-color: #222222; }
+.navbar-dark { background-color: #28668f; }
 .table th, .table td { vertical-align: middle; }
 
 
@@ -66,8 +66,9 @@ body { background-color: #f8f9fa; }
   background: #f8fafd;
 }
 .quick-action-card:hover {
+  animation: .4s;
   transform: translateY(-2px) scale(1.02);
-  background: #f0f4ff;
+  background: #f0f4ff!important;
 }
 
 /* Botão de pesquisa */
@@ -127,4 +128,9 @@ button,
   background: #fff;
   border-radius: 2px;
   transition: all 0.2s;
+}
+
+.card{
+  border-radius: 10px!important;
+  background: #f8f9fa!important;
 }
