@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ModalConfirm from '../components/ModalConfirm';
@@ -21,9 +21,11 @@ export default function ProdutosList({ categoria }) {
   const [filialFiltro, setFilialFiltro] = useState('');
   const [estoqueFiltro, setEstoqueFiltro] = useState('todos');
   const [limiteEstoque, setLimiteEstoque] = useState(10);
+  const [limiteEstoqueInput, setLimiteEstoqueInput] = useState(10);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const debounceTimeout = useRef();
 
   useEffect(() => {
     setLoading(true);
@@ -65,6 +67,10 @@ export default function ProdutosList({ categoria }) {
       .finally(() => setLoading(false));
   }, [categoria, location.search]);
 
+  useEffect(() => {
+    setLimiteEstoqueInput(limiteEstoque);
+  }, [limiteEstoque]);
+
   const handleDelete = (id) => {
     setProdutoToDelete(id);
     setShowModal(true);
@@ -102,10 +108,14 @@ export default function ProdutosList({ categoria }) {
 
   const handleLimiteChange = (e) => {
     const value = e.target.value;
-    setLimiteEstoque(value);
-    const params = new URLSearchParams(location.search);
-    if (estoqueFiltro === 'baixo') params.set('limite', value);
-    navigate({ search: params.toString() });
+    setLimiteEstoqueInput(value);
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    debounceTimeout.current = setTimeout(() => {
+      setLimiteEstoque(value);
+      const params = new URLSearchParams(location.search);
+      if (estoqueFiltro === 'baixo') params.set('limite', value);
+      navigate({ search: params.toString() });
+    }, 500);
   };
 
   const filteredProdutos = produtos.filter(produto =>
@@ -147,7 +157,7 @@ export default function ProdutosList({ categoria }) {
                   min="1"
                   className="form-control ms-2"
                   style={{ width: 100 }}
-                  value={limiteEstoque}
+                  value={limiteEstoqueInput}
                   onChange={handleLimiteChange}
                   title="Limite para considerar baixo estoque"
                 />
