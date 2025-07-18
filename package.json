@@ -7,7 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "test:selenium": "cd tests/selenium && python3 -m unittest discover",
+    "test:selenium:empresa": "cd tests/selenium && python3 -m unittest test_crud_operations.TestCRUDOperations.testar_empresa_crud",
+    "test:selenium:filial": "cd tests/selenium && python3 -m unittest test_crud_operations.TestCRUDOperations.testar_filial_crud",
+    "test:selenium:produto": "cd tests/selenium && python3 -m unittest test_crud_operations.TestCRUDOperations.testar_produto_crud",
+    "test:selenium:produto-view": "cd tests/selenium && python3 -m unittest test_crud_operations.TestCRUDOperations.testar_visualizacao_produto",
+    "test:selenium:navigation": "cd tests/selenium && python3 -m unittest test_navigation"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
