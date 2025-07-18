@@ -11,7 +11,8 @@ export default function FilialForm() {
 
   useEffect(() => {
     axios.get(`${API_BASE_URL}/empresas/`)
-      .then(res => setEmpresas(res.data));
+      .then(res => setEmpresas(res.data))
+      .catch(() => setEmpresas([]));
     if (id) {
       axios.get(`${API_BASE_URL}/filiais/${id}/`)
         .then(res => setFilial(res.data))
@@ -33,6 +34,9 @@ export default function FilialForm() {
   return (
     <div className="card p-4">
       <h2 className="h4 mb-3">{id ? 'Editar Filial' : 'Nova Filial'}</h2>
+      {empresas.length === 0 ? (
+        <div className="alert alert-warning">Cadastre uma empresa antes de criar uma filial.</div>
+      ) : (
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Cidade</label>
@@ -54,6 +58,7 @@ export default function FilialForm() {
           </button>
         </div>
       </form>
+      )}
     </div>
   );
 } 
