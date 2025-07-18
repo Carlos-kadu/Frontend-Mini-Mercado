@@ -1,7 +1,18 @@
 version: '3.8'
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
     container_name: FRONTEND
     ports:
-      - "3000:80"
+      - "3000:3000"
+    restart: unless-stopped
+
+  lint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: build
+    command: npm run lint
