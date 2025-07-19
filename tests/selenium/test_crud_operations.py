@@ -37,7 +37,7 @@ class TesteCRUDOperations(TesteBase):
         for categoria in ['alimentacao', 'vestuario', 'utilidades-domesticas']:
             try:
                 self.driver.get(f"{self.base_url}/produtos/{categoria}")
-                time.sleep(0.5)
+                time.sleep(1)
                 
                 for name in test_names:
                     try:
@@ -46,7 +46,7 @@ class TesteCRUDOperations(TesteBase):
                         
                         confirm_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Confirmar')]", timeout=3)
                         confirm_btn.click()
-                        time.sleep(0.5)
+                        time.sleep(1)
                     except:
                         pass
             except Exception as e:
@@ -63,7 +63,7 @@ class TesteCRUDOperations(TesteBase):
         
         try:
             self.driver.get(f"{self.base_url}/filiais")
-            time.sleep(0.5)
+            time.sleep(1)
             
             for name in test_names:
                 try:
@@ -72,7 +72,7 @@ class TesteCRUDOperations(TesteBase):
                     
                     confirm_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Confirmar')]", timeout=3)
                     confirm_btn.click()
-                    time.sleep(0.5)
+                    time.sleep(1)
                 except:
                     pass
         except Exception as e:
@@ -89,7 +89,7 @@ class TesteCRUDOperations(TesteBase):
         
         try:
             self.driver.get(f"{self.base_url}/empresas")
-            time.sleep(0.5)
+            time.sleep(1)
             
             for name in test_names:
                 try:
@@ -98,7 +98,7 @@ class TesteCRUDOperations(TesteBase):
                     
                     confirm_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Confirmar')]", timeout=3)
                     confirm_btn.click()
-                    time.sleep(0.5)
+                    time.sleep(1)
                 except:
                     pass
         except Exception as e:
@@ -109,7 +109,7 @@ class TesteCRUDOperations(TesteBase):
             cancel_btn = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Cancelar')]")
             if cancel_btn.is_displayed():
                 cancel_btn.click()
-                time.sleep(0.5)
+                time.sleep(1)
         except:
             pass
         
@@ -117,13 +117,13 @@ class TesteCRUDOperations(TesteBase):
             close_btn = self.driver.find_element(By.CSS_SELECTOR, ".modal-header .btn-close")
             if close_btn.is_displayed():
                 close_btn.click()
-                time.sleep(0.5)
+                time.sleep(1)
         except:
             pass
 
     def testar_empresa_crud(self):
         self.driver.get(f"{self.base_url}/empresas")
-        time.sleep(0.5)
+        time.sleep(1)
         
         self.close_any_open_modals()
         
@@ -311,7 +311,7 @@ class TesteCRUDOperations(TesteBase):
     def testar_filial_crud(self):
         self.garantir_empresa_existe()
         self.driver.get(f"{self.base_url}/filiais")
-        time.sleep(0.5)
+        time.sleep(1)
         
         self.close_any_open_modals()
         
@@ -431,7 +431,7 @@ class TesteCRUDOperations(TesteBase):
         self.garantir_empresa_existe()
         self.garantir_filial_existe()
         self.driver.get(f"{self.base_url}/produtos")
-        time.sleep(0.5)
+        time.sleep(1)
         
         self.close_any_open_modals()
         
@@ -440,7 +440,7 @@ class TesteCRUDOperations(TesteBase):
             categoria_select = self.esperar_elemento(By.CSS_SELECTOR, "select.form-select", timeout=3)
             select = Select(categoria_select)
             select.select_by_visible_text("Alimentação")
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -454,36 +454,36 @@ class TesteCRUDOperations(TesteBase):
             nome_input = self.esperar_elemento(By.NAME, "nome", timeout=3)
             nome_input.clear()
             nome_input.send_keys("Produto Teste Selenium")
-            time.sleep(0.5)
+            time.sleep(1)
             
             preco_input = self.driver.find_element(By.NAME, "preco")
             preco_input.clear()
             preco_input.send_keys("10.50")
-            time.sleep(0.5)
+            time.sleep(1)
             
             quantidade_input = self.driver.find_element(By.NAME, "quant")
             quantidade_input.clear()
             quantidade_input.send_keys("100")
-            time.sleep(0.5)
+            time.sleep(1)
             
             descricao_input = self.driver.find_element(By.NAME, "descricao")
             descricao_input.clear()
             descricao_input.send_keys("Descrição do produto teste")
-            time.sleep(0.5)
+            time.sleep(1)
             
             peso_input = self.driver.find_element(By.NAME, "peso")
             peso_input.clear()
             peso_input.send_keys("0.5")
-            time.sleep(0.5)
+            time.sleep(1)
             
             vegetariano_checkbox = self.driver.find_element(By.NAME, "vegetariano")
             
             filial_select = self.driver.find_element(By.NAME, "filial")
             filial_select.click()
-            time.sleep(0.5)
+            time.sleep(1)
             primeira_filial = self.driver.find_element(By.CSS_SELECTOR, "select[name='filial'] option:nth-child(2)")
             primeira_filial.click()
-            time.sleep(0.5)
+            time.sleep(1)
             
             nome_val = self.driver.find_element(By.NAME, "nome").get_attribute("value")
             preco_val = self.driver.find_element(By.NAME, "preco").get_attribute("value")
@@ -497,13 +497,13 @@ class TesteCRUDOperations(TesteBase):
         try:
             salvar_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Salvar')]", timeout=3)
             salvar_btn.click()
-            time.sleep(0.5)
+            time.sleep(1)
             
             try:
                 alert = self.driver.switch_to.alert
                 alert_text = alert.text
                 alert.accept()
-                time.sleep(0.5)
+                time.sleep(1)
                 
                 if "Erro" in alert_text:
                     raise Exception(f"Erro ao salvar produto: {alert_text}")
@@ -515,14 +515,14 @@ class TesteCRUDOperations(TesteBase):
         
         try:
             self.esperar_elemento(By.XPATH, "//h2[contains(text(), 'Produtos')]", timeout=3)
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
         try:
             self.esperar_texto(By.TAG_NAME, "body", "Produto Teste Selenium", timeout=3)
             body_text = self.driver.find_element(By.TAG_NAME, "body").text
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -533,7 +533,7 @@ class TesteCRUDOperations(TesteBase):
             edit_btn = self.esperar_clicavel(By.ID, f"edit-produto-{produto_id}", timeout=3)
             
             self.driver.execute_script("arguments[0].scrollIntoView(true);", edit_btn)
-            time.sleep(0.5)
+            time.sleep(1)
             
             edit_btn.click()
         except Exception as e:
@@ -543,45 +543,45 @@ class TesteCRUDOperations(TesteBase):
             nome_input = self.esperar_elemento(By.NAME, "nome", timeout=3)
             nome_input.clear()
             nome_input.send_keys("Produto Teste Editado")
-            time.sleep(0.5)
+            time.sleep(1)
             
             preco_input = self.driver.find_element(By.NAME, "preco")
             preco_input.clear()
             preco_input.send_keys("15.75")
-            time.sleep(0.5)
+            time.sleep(1)
             
             quantidade_input = self.driver.find_element(By.NAME, "quant")
             quantidade_input.clear()
             quantidade_input.send_keys("50")
-            time.sleep(0.5)
+            time.sleep(1)
             
             descricao_input = self.driver.find_element(By.NAME, "descricao")
             descricao_input.clear()
             descricao_input.send_keys("Descrição do produto editado")
-            time.sleep(0.5)
+            time.sleep(1)
             
             peso_input = self.driver.find_element(By.NAME, "peso")
             peso_input.clear()
             peso_input.send_keys("1.0")
-            time.sleep(0.5)
+            time.sleep(1)
             
             vegetariano_checkbox = self.driver.find_element(By.NAME, "vegetariano")
             if not vegetariano_checkbox.is_selected():
                 vegetariano_checkbox.click()
-                time.sleep(0.5)
+                time.sleep(1)
         except Exception as e:
             raise
         
         try:
             salvar_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Salvar')]", timeout=3)
             salvar_btn.click()
-            time.sleep(0.5)
+            time.sleep(1)
             
             try:
                 alert = self.driver.switch_to.alert
                 alert_text = alert.text
                 alert.accept()
-                time.sleep(0.5)
+                time.sleep(1)
                 
                 if "Erro" in alert_text:
                     raise Exception(f"Erro ao editar produto: {alert_text}")
@@ -593,7 +593,7 @@ class TesteCRUDOperations(TesteBase):
         
         try:
             self.esperar_elemento(By.XPATH, "//h2[contains(text(), 'Produtos')]", timeout=3)
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -609,16 +609,16 @@ class TesteCRUDOperations(TesteBase):
             delete_btn = self.esperar_clicavel(By.ID, f"delete-produto-{produto_id}", timeout=3)
             
             self.driver.execute_script("arguments[0].scrollIntoView(true);", delete_btn)
-            time.sleep(0.5)
+            time.sleep(1)
             
             delete_btn.click()
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
         try:
             self.esperar_elemento(By.CLASS_NAME, "modal-content", timeout=3)
-            time.sleep(0.5)
+            time.sleep(1)
             
             confirm_selectors = [
                 "//button[contains(text(), 'Confirmar')]",
@@ -653,7 +653,7 @@ class TesteCRUDOperations(TesteBase):
         self.garantir_empresa_existe()
         self.garantir_filial_existe()
         self.driver.get(f"{self.base_url}/produtos")
-        time.sleep(0.5)
+        time.sleep(1)
         
         self.close_any_open_modals()
         
@@ -662,7 +662,7 @@ class TesteCRUDOperations(TesteBase):
             categoria_select = self.esperar_elemento(By.CSS_SELECTOR, "select.form-select", timeout=3)
             select = Select(categoria_select)
             select.select_by_visible_text("Alimentação")
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -676,51 +676,51 @@ class TesteCRUDOperations(TesteBase):
             nome_input = self.esperar_elemento(By.NAME, "nome", timeout=3)
             nome_input.clear()
             nome_input.send_keys("Produto Para Visualizar")
-            time.sleep(0.5)
+            time.sleep(1)
             
             preco_input = self.driver.find_element(By.NAME, "preco")
             preco_input.clear()
             preco_input.send_keys("25.90")
-            time.sleep(0.5)
+            time.sleep(1)
             
             quantidade_input = self.driver.find_element(By.NAME, "quant")
             quantidade_input.clear()
             quantidade_input.send_keys("75")
-            time.sleep(0.5)
+            time.sleep(1)
             
             descricao_input = self.driver.find_element(By.NAME, "descricao")
             descricao_input.clear()
             descricao_input.send_keys("Produto criado para teste de visualização")
-            time.sleep(0.5)
+            time.sleep(1)
             
             peso_input = self.driver.find_element(By.NAME, "peso")
             peso_input.clear()
             peso_input.send_keys("2.5")
-            time.sleep(0.5)
+            time.sleep(1)
             
             vegetariano_checkbox = self.driver.find_element(By.NAME, "vegetariano")
             vegetariano_checkbox.click()
-            time.sleep(0.5)
+            time.sleep(1)
             
             filial_select = self.driver.find_element(By.NAME, "filial")
             filial_select.click()
-            time.sleep(0.5)
+            time.sleep(1)
             primeira_filial = self.driver.find_element(By.CSS_SELECTOR, "select[name='filial'] option:nth-child(2)")
             primeira_filial.click()
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
         try:
             salvar_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Salvar')]", timeout=3)
             salvar_btn.click()
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
         try:
             self.esperar_elemento(By.XPATH, "//h2[contains(text(), 'Produtos')]", timeout=3)
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -736,7 +736,7 @@ class TesteCRUDOperations(TesteBase):
             view_btn = self.esperar_clicavel(By.ID, f"view-produto-{produto_id}", timeout=3)
             
             self.driver.execute_script("arguments[0].scrollIntoView(true);", view_btn)
-            time.sleep(0.5)
+            time.sleep(1)
             
             view_btn.click()
         except Exception as e:
@@ -744,7 +744,7 @@ class TesteCRUDOperations(TesteBase):
         
         try:
             self.esperar_elemento(By.XPATH, f"//h2[contains(text(), 'Produto Para Visualizar')]", timeout=5)
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -763,7 +763,7 @@ class TesteCRUDOperations(TesteBase):
         try:
             voltar_btn = self.esperar_clicavel(By.XPATH, "//button[contains(text(), 'Voltar')]", timeout=3)
             voltar_btn.click()
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
@@ -779,16 +779,16 @@ class TesteCRUDOperations(TesteBase):
             delete_btn = self.esperar_clicavel(By.ID, f"delete-produto-{produto_id}", timeout=3)
             
             self.driver.execute_script("arguments[0].scrollIntoView(true);", delete_btn)
-            time.sleep(0.5)
+            time.sleep(1)
             
             delete_btn.click()
-            time.sleep(0.5)
+            time.sleep(1)
         except Exception as e:
             raise
         
         try:
             self.esperar_elemento(By.CLASS_NAME, "modal-content", timeout=3)
-            time.sleep(0.5)
+            time.sleep(1)
             
             confirm_selectors = [
                 "//button[contains(text(), 'Confirmar')]",
